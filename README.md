@@ -1,4 +1,6 @@
 ## 最近闲着也是闲着，采集了十几万首古诗词，搞了个小程序
+
+![image](https://mp.weixin.qq.com/wxopen/qrcode?action=show&type=2&fakeid=3851031074&token=1814518122)
 ### 安装步骤
 
 ```
