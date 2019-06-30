@@ -1,0 +1,175 @@
+<style lang="less">
+  .setting {
+    padding: 40rpx;
+    .setting-box {    
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+      border-radius: 10rpx;
+      padding: 20rpx 20rpx 40rpx 20rpx;
+      .item {
+        display: flex;
+        flex-direction: row;
+        padding: 20rpx;
+        border-bottom: 1px solid #F6F6F6;
+        text:nth-child(1) {
+          width: 200rpx;
+          height: 80rpx;
+          line-height: 80rpx;          
+        }
+        input {
+          padding: 10rpx 20rpx;
+          height: 80rpx;
+          line-height: 80rpx;
+          border: 1px solid #F6F6F6;
+          border-radius: 10rpx;
+          color: #666;          
+        }
+      }      
+      .item.header {        
+        text{
+          font-weight: 400;
+          height: 80rpx;
+          line-height: 80rpx;
+        }        
+      } 
+      .btn {
+        margin-top: 20rpx;
+        margin-left: 20rpx;
+        width: 120rpx;
+        text-align: center;
+        border-radius: 10rpx;
+        color: #ffffff;
+        padding: 10rpx 20rpx;
+        background-color: #01C9A4;
+      }     
+    }
+  }
+
+</style>
+<template>    
+  <view class="container">
+    <view class="setting">
+        <view class="setting-box">
+          <view class="item header">
+            <text>任务</text>
+            <text>每日完成次数</text>
+          </view>
+          <view class="item">
+            <text>朗读</text>
+            <input class="input" bindinput="bindRead" type="number" value="{{setting.read}}"/>
+          </view>
+          <view class="item">
+            <text>抄写</text>
+            <input class="input" bindinput="bindWrite" type="number" value="{{setting.write}}"/>
+          </view>
+          <view class="item">
+            <text>默写</text>
+            <input class="input" bindinput="bindMrite" type="number" value="{{setting.mrite}}"/>
+          </view>        
+          <text class="btn" @tap="save">保存</text>          
+        </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../../api'
+import token from '../../util/token'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '任务设置'
+  }
+
+  components = {
+
+  }
+
+  data = {
+    setting: {},
+    isLogin: true
+  }
+
+  methods = {
+    bindRead(event) {
+      this.setting.read = parseInt(event.detail.value)
+      if (this.setting.read > 5) {
+        this.setting.read = 5
+        this.$apply()
+      }
+    },
+    bindWrite(event) {
+      this.setting.write = parseInt(event.detail.value)
+      if (this.setting.write > 5) {
+        this.setting.write = 5
+        this.$apply()
+      }
+    },
+    bindMrite(event) {
+      this.setting.mrite = parseInt(event.detail.value)
+      if (this.setting.mrite > 5) {
+        this.setting.mrite = 5
+        this.$apply()
+      }
+    },
+    async save() {
+      // 未登录跳转登录
+      if (!token.validate()) {
+        wepy.navigateTo({
+          url: '/pages/user/login'
+        })
+        return
+      }
+      const res = await api.request({
+        url: api.uri.v1TaskSettingSave,
+        method: 'POST',
+        data: {
+          read: this.setting.read,
+          write: this.setting.write,
+          mrite: this.setting.mrite
+        }
+      })
+      if (res.code !== 1) {
+        wepy.showToast({
+          title: res.msg,
+          icon: 'none',
+          duration: 2000
+        })
+        return
+      }
+      // 调回上一页
+      wepy.navigateBack({
+        delta: 1
+      })
+    }
+  }
+
+  async onShow() {
+    await this.getSetting()
+  }
+
+  async onLoad() {
+
+  }
+
+  // 获取设置
+  async getSetting() {
+    if (!token.validate()) {
+      this.isLogin = false
+      return
+    }
+    const res = await api.request({
+      url: api.uri.v1TaskSetting,
+      method: 'GET'
+    })
+    if (res.code !== 1) {
+      this.isLogin = false
+      return
+    }
+    this.isLogin = true
+    this.setting = res.data
+    this.$apply()
+  }
+}
+</script>

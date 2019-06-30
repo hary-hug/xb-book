@@ -1,0 +1,253 @@
+<style lang="less">
+  .list {
+    width: 100%; 
+    padding: 40rpx;
+    .loading {
+      height: 60rpx;
+      color: #999;  
+      font-size: 26rpx;
+      text-align: center;
+      padding: 20rpx 0rpx;
+    }
+  }
+  .fav-weight {
+    display: flex;
+    flex-direction: column;
+    align-items: left;    
+    .title {
+      width: 100%;
+      text-align: center;
+      font-size: 36rpx;
+      font-weight: 400;
+      padding: 20rpx 0;
+      border-bottom: 1px solid #F6F6F6;      
+    }     
+    .weight-box {
+      width: 100%;
+      padding: 0 40rpx;
+      overflow:hidden;
+      .weight {    
+        position: relative;                    
+        margin-top: 30rpx;      
+        height: 40rpx;
+        box-sizing: border-box;
+        text {
+          position: absolute;
+          top: 10rpx;
+          left: 60rpx;    
+          height: 20rpx;            
+        }
+        .tick {
+          position: absolute;
+          left: 0rpx;
+          top: 0;
+          width: 40rpx;
+          height: 40rpx;
+        }
+
+        .weight-5 {
+          background: rgba(255, 152, 0, 1);
+          width: 80%;
+        }
+        .weight-4 {
+          background: rgba(255, 152, 0, 0.8);
+          width: 70%;        
+        }
+        .weight-3 {
+          background: rgba(255, 152, 0, 0.6);
+          width: 60%;
+        }
+        .weight-2 {
+          background: rgba(255, 152, 0, 0.4);
+          width: 50%;
+        }
+        .weight-1 {
+          background: rgba(255, 152, 0, 0.2);
+          width: 40%;
+        }
+      } 
+    }                 
+    .done {
+      width: 200rpx;
+      height: 60rpx;
+      font-size: 32rpx;
+      line-height: 60rpx;
+      margin: 40rpx 0 40rpx 100rpx;          
+      text-align: center;
+      color: #ffffff;      
+      background-color: #FF9800;
+      border-radius: 10rpx;
+    }    
+  }
+</style>
+<template>
+  <view class="container">
+    <drawer>
+      <view class="fav-weight">
+        <text class="title">选择权重</text> 
+        <view class="weight-box">
+          <view class="weight" @tap="selectWeight" id="5">
+            <image class="tick" 
+              src="{{onWeight == 5 ? '../../assets/icons/tick-selected.png' : '../../assets/icons/tick.png'}}"/>
+            <text class="weight-5"></text>       
+          </view>
+          <view class="weight" @tap="selectWeight" id="4">
+            <image class="tick" 
+              src="{{onWeight == 4 ? '../../assets/icons/tick-selected.png' : '../../assets/icons/tick.png'}}"/>
+            <text class="weight-4"></text>
+          </view>
+          <view class="weight" @tap="selectWeight" id="3">
+            <image class="tick" 
+              src="{{onWeight == 3 ? '../../assets/icons/tick-selected.png' : '../../assets/icons/tick.png'}}"/>
+            <text class="weight-3"></text>          
+          </view>
+          <view class="weight" @tap="selectWeight" id="2">
+            <image class="tick" 
+              src="{{onWeight == 2 ? '../../assets/icons/tick-selected.png' : '../../assets/icons/tick.png'}}"/>
+            <text class="weight-2"></text>          
+          </view>
+          <view class="weight" @tap="selectWeight" id="1">
+            <image class="tick" 
+              src="{{onWeight == 1 ? '../../assets/icons/tick-selected.png' : '../../assets/icons/tick.png'}}"/>
+            <text class="weight-1"></text>          
+          </view>
+        </view>                
+        <text class="done" @tap="addFavourite">完成</text>
+      </view>
+    </drawer>
+    <view class="list">
+      <repeat for="{{poems}}" key="i" index="idx" item="poem">
+        <list-item :item="poem"></list-item>
+      </repeat>
+      <view class="loading" wx:if="{{isLoading}}">
+          <text>玩命加载中···</text>
+      </view>           
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../../api'
+import comListItem from '@/components/poem/list-item'
+import comDrawer from '@/components/interacts/drawer'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '诵小宝'
+  }
+
+  components = {
+    'list-item': comListItem,
+    'drawer': comDrawer
+  }
+
+  data = {
+    serieName: '',
+    page: 1,
+    pageSize: 10,
+    isEnd: false,
+    isLoading: false,
+    onFavourItem: 0, // 正在选择收藏的id
+    onWeight: 0, // 选择的收藏权重
+    poems: []
+  }
+
+  events = {
+    // 接收组件list-item收藏按钮点击事件
+    'drawer': (item) => {
+      // 调用组件drawer-favour的toggle方法
+      this.$invoke('drawer', 'toggle')
+      this.onFavourItem = item
+    }
+  }
+
+  methods = {
+    // 选择权重
+    selectWeight: (event) => {
+      let weight = event.currentTarget.id
+      this.onWeight = weight
+      this.$apply()
+    },
+    // 添加收藏
+    addFavourite: async (event) => {
+      if (!this.onWeight) {
+        wepy.showToast({
+          title: '请选择权重',
+          icon: 'none',
+          duration: 2000
+        })
+        return
+      }
+
+      const res = await api.request({
+        url: api.uri.addFavourite,
+        method: 'POST',
+        data: {
+          weight: parseInt(this.onWeight),
+          poem_id: this.onFavourItem.poem_id
+        }
+      })
+
+      if (res.code !== 1) {
+        // 提示错误信息
+        wepy.showToast({
+          title: res.msg,
+          icon: 'none',
+          duration: 2000
+        })
+        return
+      }
+      // 关闭组件drawer的弹出
+      this.$invoke('drawer', 'toggle')
+      // 改变按钮收藏按钮颜色
+      this.$invoke('list-item', 'favour')
+    }
+  }
+
+  onShow () {
+
+  }
+
+  // 滚动到底部加载数据
+  onReachBottom () {
+    this.getPoems()
+  }
+
+  async onLoad(options) {
+    this.poems = []
+    this.page = 1
+    this.isEnd = false
+    this.isLoading = false
+    this.serie = options.serie
+    await this.getPoems()
+  }
+
+  async getPoems() {
+    if (this.isEnd) {
+      return
+    }
+    if (this.isLoading) {
+      return
+    }
+    this.isLoading = true
+    const res = await api.request({
+      url: api.uri.v1SeriePoems,
+      method: 'GET',
+      data: {
+        serie: this.serie,
+        page: this.page,
+        size: this.pageSize
+      }
+    })
+    this.isLoading = false
+    if (res.data.length >= this.pageSize) {
+      ++this.page
+      this.isEnd = false
+    } else {
+      this.isEnd = true
+    }
+    this.poems = this.poems.concat(res.data)
+    this.$apply()
+  }
+}
+</script>

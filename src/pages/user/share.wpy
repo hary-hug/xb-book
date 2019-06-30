@@ -1,0 +1,56 @@
+<style lang="less">
+
+</style>
+<template>
+  <view class="container">
+    <canvas canvas-id="shareCanvas" style="width:300px;height:500px; margin:0 auto"></canvas>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../../api'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的'
+  }
+
+  components = {
+
+  }
+
+  data = {
+    
+  }
+
+  methods = {
+
+  }
+
+  onShow() {
+    
+  }
+
+  async onLoad() {
+  
+    wepy.getImageInfo({
+        src: 'http://ptp0ygdcz.bkt.clouddn.com/share-bg.jpeg'
+    }).then(res => {
+      const ctx = wepy.createCanvasContext('shareCanvas')
+      ctx.drawImage(res.path, 0, 0, 300, 500)
+      // 文字居中
+      ctx.setTextAlign('center')
+      // 文字颜色
+      ctx.setFillStyle('#333333')
+      // 文字字号
+      ctx.setFontSize(16);
+      ctx.fillText("人生如之如初见", 80, 100)
+      ctx.fillText("何事秋风悲画扇", 80, 125)      
+      ctx.draw()
+    })
+
+  }
+
+}
+</script>
+

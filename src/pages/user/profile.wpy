@@ -1,0 +1,167 @@
+<style lang="less">
+.user {
+  width: 100%; 
+  height: 100%;
+  padding: 40rpx;
+  .user-box {
+    height: 100%;
+    display: flex;  
+    flex-direction: column; 
+    background-color: #ffffff;
+    border-radius: 10rpx;
+    .user-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;   
+      padding: 40rpx; 
+      border-bottom: 1px solid #F6F6F6;
+      .avatar {    
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 60rpx;  
+      }
+      .txt {
+        font-size: 32rpx;
+        padding: 10rpx 20rpx;  
+      }
+      .nologin {
+        margin-top: 20rpx;
+        color: #FF9800;
+      }
+      .login {
+        margin-top: 20rpx;
+        color: #01C9A4;
+      }
+    }
+
+    .section {
+      height: 100rpx;
+      font-size: 30rpx;
+      line-height: 100rpx;
+      padding-left: 20rpx;
+      box-sizing: border-box;
+      border-bottom: 1px solid #F6F6F6; 
+      .s-label {
+        float: left;
+      }
+      .s-open {
+        float: right;
+        width: 60rpx;
+        padding-left: 20rpx; 
+        .s-icon {  
+          display: inline-block;
+          box-sizing: border-box; 
+          border-right: 3rpx solid #666;
+          border-bottom: 3rpx solid #666;
+          width: 22rpx;
+          height: 22rpx;  
+          transform: rotate(-45deg); 
+        }
+      }
+    }
+  }
+}
+
+</style>
+<template>
+  <view class="container">
+      <view class="user">
+        <view class="user-box">
+          <view class="user-header">
+              <image 
+                class="avatar" 
+                src="{{user.avatar ? user.avatar : '../../assets/avatar.png'}}"/>              
+              <view class="nologin" wx:if="{{!isLogin}}">                  
+                <navigator                    
+                  url="/pages/user/login"
+                  hover-class="none"
+                  open-type="navigate">                   
+                  <text class="txt">点击登录</text>  
+                </navigator>
+              </view>
+              <view class="login" wx:if="{{isLogin}}">
+                  <text class="txt">{{user.nickname}}</text>                  
+              </view>              
+          </view>
+          <view class="section clear">
+              <text class="s-label">任务设置</text>
+              <navigator          
+                class="s-open"
+                url="/pages/user/tasksetting"
+                hover-class="none">
+                <text class="s-icon"></text>
+              </navigator>
+          </view>
+          <view class="section clear">
+              <text class="s-label">意见反馈</text>
+              <navigator          
+                class="s-open"
+                url="/pages/user/feedback"    
+                hover-class="none">
+                <text class="s-icon"></text>
+              </navigator>
+          </view>
+          <view class="section clear">
+              <text class="s-label">分享给朋友</text>
+              <navigator          
+                class="s-open"                 
+                hover-class="none">
+                <text class="s-icon"></text>
+              </navigator>
+          </view>
+        </view>
+      </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../../api'
+import token from '../../util/token'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的'
+  }
+
+  components = {
+
+  }
+
+  data = {
+    user: {},
+    isLogin: false
+  }
+
+  methods = {
+
+  }
+
+  onShow() {
+    this.user = {}
+    this.getUser()
+  }
+
+  async onLoad() {
+
+  }
+
+  // 获取用户信息
+  async getUser() {
+    if (!token.validate()) {
+      this.isLogin = false
+      return
+    }
+    const res = await api.request({
+      url: api.uri.user,
+      method: 'GET'
+    })
+    if (res.code !== 1) {
+      this.isLogin = false
+      return
+    }
+    this.isLogin = true
+    this.user = res.data
+    this.$apply()
+  }
+}
+</script>

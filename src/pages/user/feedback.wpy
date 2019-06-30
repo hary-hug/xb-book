@@ -1,0 +1,120 @@
+<style lang="less">
+.feedback {  
+  width: 100%; 
+  padding: 40rpx;
+  .content {
+    width: 100%;
+    height: 350rpx;  
+    padding: 20rpx;
+    font-size: 30rpx;
+    border-radius: 10rpx;
+    background-color: #ffffff;
+  }
+  .submit {    
+    margin-top: 40rpx;  
+    border-radius: 10rpx;
+    color: #ffffff;
+    background-color: #01C9A4;
+  }
+  .submit::after {
+    border: none !important;
+  }
+}
+</style>
+<template>
+  <view class="container">
+    <view class="feedback">
+      <textarea 
+      class="content"
+      bindblur="bindValue"
+      placeholder="留下您宝贵的意见吧"
+      maxlength="250">
+      </textarea>
+      <button 
+        class="submit"
+        @tap="feedback"
+        loading="{{isLoading}}">提交</button>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../../api'
+import token from '../../util/token'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '意见反馈'
+  }
+
+  components = {
+
+  }
+
+  data = {
+    content: '',
+    isLoading: false 
+  }
+
+  methods = {
+    bindValue(event) {
+      this.content = event.detail.value
+    },
+
+    async feedback() {
+      if (!token.validate()) {
+        wepy.navigateTo({
+          url: '/pages/user/login'
+        })
+        return
+      }
+
+      if (!this.content || this.content.length < 10) {
+        wepy.showToast({
+          title: '请输入至少10个字符',
+          icon: 'none',
+          duration: 2000
+        })
+        return
+      }
+
+      this.isLoading = true
+      const res = await api.request({
+        url: api.uri.v1FeedbackAdd,
+        method: 'POST',
+        data: {
+          content: this.content
+        }
+      })
+
+      this.isLoading = false
+      this.$apply()
+
+      if (res.code !== 1) {        
+        wepy.showToast({
+          title: res.msg,
+          icon: 'none',
+          duration: 2000
+        })
+        return
+      }
+      wepy.showToast({
+        title: '提交成功',
+        icon: 'none',
+        duration: 2000
+      })
+      return
+    }
+  }
+
+  onShow() {
+
+  }
+
+  async onLoad(options) {
+
+  }
+  
+  
+}
+</script>

@@ -1,0 +1,108 @@
+<style lang="less">
+page {
+  height: 100%;
+  color: #333;
+  background: #F5F7F9;
+  font-weight: 200;
+}
+
+view,textarea,input {
+  box-sizing: border-box;
+}
+
+.clear:after { 
+  visibility: hidden; 
+  overflow: hidden; 
+  display: block; 
+  font-size: 0px; 
+  content: "";
+  clear: both; 
+  height: 0; 
+}
+
+.clear { 
+zoom: 1 
+}
+
+.container {    
+  width: 100%;
+  height: 100%;             
+}
+
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/index',
+      'pages/poem/list',
+      'pages/poem/detail',
+      'pages/search/list',
+      'pages/user/login',
+      'pages/user/profile',
+      'pages/user/feedback',
+      'pages/user/share',
+      'pages/user/tasksetting',
+      'pages/favourite/index',
+      'pages/favourite/list',
+      'pages/favourite/task'
+    ],
+
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#01C9A4',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'white',
+      backgroundColorTop: '#F5F7F9',
+      backgroundColorBottom: '#F5F7F9'
+    },
+
+    tabBar: {
+      color: '#666666',
+      selectedColor: '#01C9A4',
+      borderStyle: 'white',
+      backgroundColor: '#fff',
+      list: [
+        {
+          pagePath: 'pages/index',
+          text: '首页',
+          iconPath: 'assets/icons/home.png',
+          selectedIconPath: 'assets/icons/home-selected.png'
+        },
+        {
+          pagePath: 'pages/search/list',
+          text: '搜索',
+          iconPath: 'assets/icons/search.png',
+          selectedIconPath: 'assets/icons/search-selected.png'
+        },
+        {
+          pagePath: 'pages/favourite/index',
+          text: '收藏',
+          iconPath: 'assets/icons/star.png',
+          selectedIconPath: 'assets/icons/star-selected.png'
+        },
+        {
+          pagePath: 'pages/user/profile',
+          text: '我的',
+          iconPath: 'assets/icons/user.png',
+          selectedIconPath: 'assets/icons/user-selected.png'
+        }
+      ]
+    }
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+    this.use('promisify')
+  }
+
+  async onLaunch () {
+
+  }
+}
+</script>

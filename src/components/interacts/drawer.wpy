@@ -1,0 +1,174 @@
+<style lang="less">
+  @font-face {
+      font-family: 'icomoon';
+      src: url(data:application/font-woff2;charset=utf-8;base64,d09GMgABAAAAAAIwAA0AAAAABeAAAAHcAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP0ZGVE0cGh4GYACCXhEICnh2Cw4AATYCJAMYBCAFgxsHRRvnBMguCmNj1uST/YStUXRIxeg9f/NLPM+33//2mZkn/hPi8afvEUtW8WbW8Uo3D5mQCdkrlUVkka///zfvO5F8yxZ2PIz+4tVe5mEJPMRcJ6kZTN4/dZP/K+0SGZO6TCJaFOhj4mNhgGnnAXa+xvkmDDjMNeFA3DbO8zF4DE8GMaQnBa1GFyHw4zOEX+GdO7Y1YYptKCJ6oqGg1rP0TI/yvoynFOevzYyYliwpPYr+qF86jlZRgYD8gKCevEfABYFgj+YgxoaKIg780d11IN6ka3tPFWMAUUmfVCAFhXyZ0HBZpOssQB9M0bANy4AGCCJSIWe5+Vj5SpRe1qWuasA98m/bZ8/obqgtnTotuVEfLAAI8Hvov7g4+H84aZI3Cp3aVRgqINLy3xqonQAA+g2QswAUNAj6ZgIKAADmPguIgSUBxcCygGrgKALNwAUEeiYeINA38ErA2C5fUaWNxJwAhdgBKrEGGnGC7tnmEt0396T32JZPbnNmo9lsgttX5wVRDZxSqp0GxgYPyNJgNGFPeU5ps2vdzLoVaxwtGddX1ubWOWY2OTA3lSaljXEoecwVL+YkRIEi7rOhnRadvDp/vTAHRWnfJ0VJVdP6N4d3adLB3alNsJqTZ2trAAA=) format('woff2'),
+          url(data:application/font-woff;charset=utf-8;base64,d09GRgABAAAAAAPoAA0AAAAABeAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABGRlRNAAADzAAAABoAAAAcg/L73UdERUYAAAOwAAAAHAAAAB4AJwAMT1MvMgAAAZQAAAA+AAAAYA8TBYBjbWFwAAAB6AAAAFIAAAFeF1fZ4Gdhc3AAAAOoAAAACAAAAAgAAAAQZ2x5ZgAAAkwAAABPAAAAeEJUh0loZWFkAAABMAAAACwAAAA2EWwZUmhoZWEAAAFcAAAAHQAAACQHwQPHaG10eAAAAdQAAAAUAAAAGAtVAABsb2NhAAACPAAAAA4AAAAOAFQAIG1heHAAAAF8AAAAGAAAACAACAAPbmFtZQAAApwAAADcAAABm/pYTdhwb3N0AAADeAAAAC0AAABF1A7LEHjaY2BkAIMPOQ5X4vltvjJws4D519WzshD0/4PM/5kPALkcDEwgUQA7QQtTeNpjYGRgYD7w/wADAwsDCDD/Z2BkQAVsAF8xA5EAAAB42mNgZGBgYGPgZQDRDAxMDGgAAAJfABh42mNgZg5lnMDAysDANJPpDAMDQz+EZnzNYMzIyYAKGAXQBBgcGBhfMjAf+H+AwYEZiEFqkGQVGBgBOUEKngAAeNpjYYAAxlAIzQTELEAMAAWjAGF42mNgYGBmgGAZBkYGEIgA8hjBfBYGGyDNxcDBwASEjAwKLxn+//3/H6wKzv7/RJwVrIOLAQYYQeYxsgExM1SACUgwMaACoB0sDMMbAAAjgA0fAAAAAAAAAAgACAAQABgAPAAAeNqNiMEJgDAQBHdzDznwrSVYgthHkiLXFKGNXQyCf+cxMAPiIwFHwo/ut3W7MAPcnJNzde5O6wrFKZZXrIrGbMt4LEMhMUcTKwseeNMbVQB42nXOsWrCUBjF8X80WrQgnUrpdEenoOADdCp1cOkgHRvjJQT0XogRdO8jdOwz9GF8Ik/CtyZww+87N+cjwIx/Eton4YEn80Cem4fymzmVv8wjHrmYx8p/zVNeuamVpBMls25D64H8Yh7KC3Mqf5hHPPNtHiv/MU9Z8UdFQeSoEwlQFfEYo/CJp+TMgZxaoy/Ph1zo+74v32pPzUn3be5Ykukv2fr6VMXgltmiv/vezY1apbaEblOu2bNXtuOq97rrbqybqRRD40offJ03fu92V7cu4kb7Mu7l2z5DeNpjYGLAD9gYGBiZGJgYmRmYGVnY0nMqCzIM2UvzMg0MDMC0q6WBAQBW9wa6AAAAAAEAAf//AA942mNgZGBg4AFiMSBmYmAEQlYgZgHzGAAD1QA0eNpjYGBgZACCq0vUOUD0dfWsLBgNADj5BU4AAA==) format('woff');
+      
+  }
+
+  .slider-outer{
+    width: 100%;
+    z-index: 98;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+    .slider-mask{
+      height: 100%;
+      background-color: rgba(0,0,0, 0.3);
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    .slider-sheet {
+      transition: all 0.3s ease-in-out;
+      position: absolute;
+      background-color: #fff;
+      box-sizing: border-box;
+      box-shadow: 10px 10px 30px 0 rgba(0,0,0,0.1);
+      .slider-inner {
+        position: relative;
+        width: 100%;
+        z-index: 99;
+        height:100%;
+        .icon-close {
+          position: absolute;
+          top: 20rpx;
+          right: 20rpx;
+          background-size:contain;      
+          z-index:99;
+          width: 40rpx;
+          height: 40rpx;
+        }
+        .icon-close:before {
+          content: "\e900";
+          font-family: 'icomoon' !important;
+          font-style: normal;
+          font-weight: normal;
+          font-variant: normal;
+          text-transform: none;
+          line-height: 1;  
+        }
+        .close-default {
+          color: #ccc;
+          font-size: 36rpx;
+        }
+      }
+    }
+    .slider-sheet.left {
+      transform: translate3d(-100%, 0, 0);
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 65%;
+      .icon-close {
+        bottom:20rpx;
+        right:20rpx;
+      } 
+    }
+    .slider-sheet.left.open {
+      transform: translate3d(0%, 0, 0);
+    }
+    .slider-sheet.right {
+      transform: translate3d(100%, 0, 0);
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width:65%; 
+      .icon-close {
+        left: 20rpx;
+        top: 20rpx;      
+      } 
+    }
+    .slider-sheet.right.open {
+      transform: translate3d(0%, 0, 0);
+    }
+    .slider-sheet.bottom {
+      transform: translate3d(0, 110%, 0);
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      min-height: 55px;
+      box-shadow: 0 -10px 30px 0 rgba(0, 0, 0, 0.1);
+      .icon-close {
+        top: 20rpx;
+        left: 20rpx;
+      }
+    }
+    .slider-sheet.bottom.open {
+      transform: translate3d(0%,0,0);
+    }
+    .slider-sheet.full {
+      transform: translate3d(0, -110%, 0);
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100vh;
+      box-shadow:0 -10px 30px 0 rgba(0,0,0,0.1);
+    }
+    .icon-close {
+      top: 20rpx;
+      right: 20rpx;
+    }
+    .slider-sheet.full.open {
+      transform: translate3d(0%,0,0);
+    }
+  }
+</style>
+<template>
+  <view class="slider-outer" style="visibility: {{open ? 'visible' : 'hidden'}};" @tap="handleTapSheet">
+    <view class="slider-mask" id="sheetmask"></view>
+    <view class="slider-sheet {{mode}} {{open ? 'open' : ''}}">
+      <view class="slider-inner">
+        <view class="icon-close {{closeClass}}" @tap="handleTapBtn" id="icon-close" hidden="{{!displayClose}}"/>
+        <slot></slot>
+      </view>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+export default class SideSlider extends wepy.component {
+  props = {
+    open: {
+      type: Boolean,
+      default: false
+    },
+    mode: {
+      type: String,
+      default: 'bottom'
+    },
+    displayClose: {
+      type: Boolean,
+      default: false
+    },
+    closeClass: {
+      type: String,
+      default: 'close-default'
+    }
+  }
+
+  methods = {
+    handleTapSheet (e) {
+      const isTarget = e.target.id === 'sheetmask'
+      if (isTarget) {
+        this.open = !this.open
+        this.$apply()
+      }
+    },
+    handleTapBtn (e) {
+      this.open = !this.open
+      this.$apply()
+    },
+    toggle () {
+      this.open = !this.open
+      this.$apply()
+    }
+  }
+}
+</script>

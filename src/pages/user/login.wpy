@@ -1,0 +1,132 @@
+<style lang="less">
+  .login {
+    position: absolute;
+    top: 50%; 
+    left: 50%;
+    width: 60%; 
+    .login-btn {  
+      background-color: #01C9A4;
+      color: #ffffff;  
+      border-radius: 10rpx;
+    } 
+    .login-btn::after {
+      border: none !important;
+    }
+    .phone {
+      margin-top: 60rpx;
+    }
+  }
+</style>
+<template>
+  <view class="container" style="position:relative">
+    <view 
+      class="login" 
+      id="login" 
+      style="margin-top: -{{offetY}}px; margin-left: -{{offetX}}px">
+        <button 
+          class="login-btn wechat"
+          open-type="getUserInfo"
+          bindgetuserinfo="wxLogin"          
+          loading="{{isLoading}}">微信登录</button>
+        <button class='login-btn phone' @tap="pLogin">手机登录</button>
+    </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../../api'
+import token from '../../util/token'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '登录'
+  }
+
+  components = {
+
+  }
+
+  data = {
+    isLoading: false,
+    offetX: 0,
+    offetY: 0
+  }
+
+  methods = {
+    pLogin: function () {
+      wepy.showToast({
+        title: '该功能尚未开发',
+        icon: 'none',
+        duration: 2000
+      })
+    },
+    wxLogin: async (event) => {
+      const settings = await wepy.getSetting()
+      if (!settings.authSetting['scope.userInfo']) {
+        wepy.showModal({
+          title: '温馨提示',
+          content: '您已拒绝授权登录，部分用户相关的功能将无法使用',
+          confirmText: '继续登录',
+          confirmColor: '#01C9A4',
+          showCancel: false
+        }).then(res => {
+          // todo
+        })
+        return
+      }
+
+      // 获取用户信息
+      this.isLoading = true
+      this.$apply()
+      const loginData = await wepy.login()
+      const userinfo = await wepy.getUserInfo()
+      const res = await api.request({
+        url: api.uri.wxLogin,
+        method: 'POST',
+        data: {
+          code: loginData.code,
+          iv: userinfo.iv,
+          encrypted_data: userinfo.encryptedData
+        }
+      })
+      if (res.code !== 1) {
+        wepy.showToast({
+          title: res.msg,
+          icon: 'none',
+          duration: 2000
+        })
+        return
+      }
+      // 保存token到本地
+      token.save(res.data.access_token, res.data.expire_at)
+      this.isLoading = false
+      this.$apply()
+      // 跳转到
+      wepy.navigateBack({
+        delta: 1
+      })
+    }
+  }
+
+  onShow() {
+
+  }
+
+  async onLoad(options) {
+    await this.getOffset()
+  }
+
+  // 获取登录框宽高
+  async getOffset() {
+    var query = wx.createSelectorQuery()
+    // 选择id
+    query.select('#login').boundingClientRect()
+    query.exec(res => {
+      // 取高度
+      this.offetY = res[0].height / 2
+      this.offetX = res[0].width / 2
+      this.$apply()
+    })
+  }
+}
+</script>

@@ -1,0 +1,170 @@
+<style lang="less">
+  .swiper {
+    width:100%;
+    height:90%;
+    .swiper-item {  
+      padding: 40rpx;
+      box-sizing: border-box;  
+      .list {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        flex-direction: column;  
+        background-color: #ffffff;
+        border-radius: 10rpx;
+        box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.08);
+        .image {
+          width: 100%;
+          height: 45%;
+          border-top-right-radius: 10rpx;
+          border-top-left-radius: 10rpx;
+        }
+        .title {
+          font-weight: 400;
+          font-size: 36rpx;
+          margin-top: 40rpx;
+        }
+        .intro {  
+          font-size: 30rpx;
+          padding: 30rpx;
+          text-align: justify;
+        }
+        .entrance {   
+          position: absolute;  
+          left: 0;
+          bottom: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;   
+          width: 100%;
+          height: 160rpx;  
+          border-top: 1px solid #F6F6F6;
+          navigator {
+            display: inline-block;
+            height: 60rpx;
+            border: 2rpx solid #01C9A4;
+            border-radius: 10rpx;
+            color: #01C9A4;
+            font-size: 28rpx;  
+            line-height: 60rpx;  
+            text-align: center;
+            padding-left: 20rpx;
+            padding-right: 20rpx;
+            margin-top: 50rpx;
+          }
+        }
+      }
+    }
+  }
+  .pagination {
+    height: 10%;
+    display:flex;
+    align-items:center;    
+    .pagination-bar {
+      display: inline-block;
+      margin: -40rpx auto 0;                    
+      .item {
+        float: left;
+        width: 15rpx;
+        height: 15rpx;
+        box-sizing: border-box;
+        margin-right: 5rpx;
+        border: 1rpx solid #01C9A4;
+        border-radius: 20rpx;        
+      }
+      .item:last-child {
+        margin-right: 0;
+      }
+      .item.on {        
+        border: none !important;
+        background: #01C9A4 !important;        
+      }
+    } 
+  }
+</style>
+<template>
+  <view class="container"> 
+    <swiper class="swiper" bindchange="pageChange" current='{{currentPageIndex}}'>
+      <repeat for="{{series}}" key="i" index="idx" item="list">
+        <swiper-item  class="swiper-item">
+          <view class="list">
+            <image class="image" src="../assets/{{list.image}}"/>
+            <text class="title">{{list.name}}</text>          
+            <text class="intro">{{list.intro}}</text>
+            <view class="entrance">
+              <navigator
+                hover-class="none"
+                url="/pages/poem/list?serie={{list.name}}"
+                open-type="navigate">                   
+                <text>进入选集</text>  
+              </navigator>    
+            </view>    
+          </view>
+        </swiper-item>  
+      </repeat>     
+    </swiper>
+    <view class="pagination">
+      <view class="pagination-bar clear">
+        <repeat for="{{series}}" key="i" index="idx" item="serie">
+          <text class="item {{currentPageIndex == idx ? 'on' :''}}"></text>        
+        </repeat>   
+      </view>
+    </view>       
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import api from '../api'
+
+export default class Index extends wepy.page {
+  config = {
+    navigationBarTitleText: '诵小宝'
+  }
+
+  components = {
+
+  }
+
+  data = {
+    currentPageIndex: 0,
+    series: []
+  }
+
+  methods = {
+    pageChange: (event) => {
+      if (event.detail.source === 'touch') {
+        this.currentPageIndex = event.detail.current
+        this.$apply()
+      }
+    }
+  }
+
+  async onShow () {
+    // 当页面数据没有被加载时，再次显示就请求数据
+    if (this.series.length <= 0) {
+      await this.getSerie()
+    }
+  }
+
+  async onLoad() {
+
+  }
+
+  // 获取数据列表
+  async getSerie (params) {
+    wepy.showLoading({
+      title: '玩命加载中...'
+    })
+    const res = await api.request({
+      url: api.uri.v1Series,
+      method: 'GET',
+      data: {}
+    })
+    this.series = res.data
+    this.$apply()
+    wepy.hideLoading()
+  }
+}
+</script>
