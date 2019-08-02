@@ -212,7 +212,7 @@ export default class Index extends wepy.page {
     this.poem = res.data
     if (this.poem.audio === 1) {
       // 音频地址
-      let src = audioHost + md5.md5(this.poem.poem_id + 'E81vlldNEBKnRcTB') + '.mp3'
+      let src = audioHost + md5.md5(this.poem.poem_id + '') + '.mp3'
       this.audioCtx.src = src
     }
     this.$apply()
